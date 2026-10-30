@@ -22,7 +22,7 @@ var APP="https://script.google.com/macros/s/AKfycbyyBcBzjWO62UXWzQO_rAGViSNII3fQ
 function show(h){document.open();document.write(h);document.close();}
 var C=null;try{C=localStorage.getItem("ucl-app")}catch(e){}
 var F=fetch(APP).then(function(r){if(!r.ok)throw new Error("http");return r.text();}).then(function(h){try{localStorage.setItem("ucl-app",h)}catch(e){}if(C&&h!==C){window.__appNew=true;if(window.appUpdated)window.appUpdated();}return h;});
-if(C){show(C);}else{F.then(show).catch(function(){document.getElementById("m").textContent="אין חיבור לאינטרנט";document.getElementById("r").style.display="block";});}
+if(C){if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",function(){show(C);});else show(C);}else{F.then(show).catch(function(){document.getElementById("m").textContent="אין חיבור לאינטרנט";document.getElementById("r").style.display="block";});}
 </script>
 </body>
 </html>
