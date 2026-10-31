@@ -1,4 +1,4 @@
-const C="ucl-v2";
+const C="ucl-v3";
 const API="https://script.google.com/macros/s/AKfycbyyBcBzjWO62UXWzQO_rAGViSNII3fQU-HK7u7IL0npJN86XAguAy8xHydLehCyneUJ/exec";
 const SHELL=["./","./index.html","./manifest.webmanifest","./icon-192.png","./icon-512.png","./apple-touch-icon.png"];
 self.addEventListener("install",e=>{e.waitUntil(caches.open(C).then(c=>c.addAll(SHELL)));self.skipWaiting();});
@@ -8,14 +8,14 @@ self.addEventListener("fetch",e=>{const u=new URL(e.request.url);if(e.request.me
 /* תזכורות: ההתראה מגיעה ריקה, והטקסט נשלף מהשרת */
 self.addEventListener("push",e=>{
   e.waitUntil((async()=>{
-    let msg={title:"ניחושי הצמרת",body:"יש משחקים שמחכים לניחוש שלך"};
+    let msg={title:"⚽ ניחושי הצמרת",body:"יש משחקים שמחכים לניחוש שלך"};
     try{
       const sub=await self.registration.pushManager.getSubscription();
       const r=await fetch(API,{method:"POST",body:JSON.stringify({fn:"api_push_pending",args:[sub?sub.endpoint:""]})});
       const j=await r.json();
       if(j&&j.result&&j.result.title)msg=j.result;
     }catch(x){}
-    await self.registration.showNotification(msg.title,{body:msg.body,icon:"icon-192.png",badge:"icon-192.png",tag:"ucl-reminder",renotify:true,data:{url:"./"}});
+    await self.registration.showNotification(msg.title,{body:msg.body,icon:"icon-192.png",badge:"icon-192.png",dir:"rtl",lang:"he",tag:msg.tag||"ucl-reminder",renotify:true,timestamp:Date.now(),data:{url:"./"}});
   })());
 });
 self.addEventListener("notificationclick",e=>{
