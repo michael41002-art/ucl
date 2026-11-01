@@ -1,4 +1,4 @@
-const C="ucl-v3";
+const C="ucl-v4";
 const API="https://script.google.com/macros/s/AKfycbyyBcBzjWO62UXWzQO_rAGViSNII3fQU-HK7u7IL0npJN86XAguAy8xHydLehCyneUJ/exec";
 const SHELL=["./","./index.html","./manifest.webmanifest","./icon-192.png","./icon-512.png","./apple-touch-icon.png"];
 self.addEventListener("install",e=>{e.waitUntil(caches.open(C).then(c=>c.addAll(SHELL)));self.skipWaiting();});
@@ -15,10 +15,11 @@ self.addEventListener("push",e=>{
       const j=await r.json();
       if(j&&j.result&&j.result.title)msg=j.result;
     }catch(x){}
-    await self.registration.showNotification(msg.title,{body:msg.body,icon:"icon-192.png",badge:"icon-192.png",dir:"rtl",lang:"he",tag:msg.tag||"ucl-reminder",renotify:true,timestamp:Date.now(),data:{url:"./"}});
+    await self.registration.showNotification(msg.title,{body:msg.body,icon:"icon-192.png",badge:"icon-192.png",dir:"rtl",lang:"he",tag:msg.tag||"ucl-reminder",renotify:true,timestamp:Date.now(),data:{url:msg.url||"./"}});
   })());
 });
 self.addEventListener("notificationclick",e=>{
   e.notification.close();
-  e.waitUntil(self.clients.matchAll({type:"window",includeUncontrolled:true}).then(ws=>{for(const w of ws){if("focus" in w)return w.focus();}return self.clients.openWindow("./");}));
+  const url=(e.notification.data&&e.notification.data.url)||"./";
+  e.waitUntil(self.clients.matchAll({type:"window",includeUncontrolled:true}).then(ws=>{for(const w of ws){if("focus" in w){w.postMessage({open:url});return w.focus();}}return self.clients.openWindow(url);}));
 });
